@@ -1,8 +1,31 @@
-import { sum } from '../core/sum';
+import fc from 'fast-check';
 
-test('should sum two numbers', () => {
-	const result = sum(1, 2);
-	const expected = 3;
+function sum(a: number, b: number) {
+	return a + b;
+}
 
-	expect(result).toBe(expected);
+describe('The properties of sum', () => {
+	test('Zero is the neutral element', () => {
+		fc.assert(
+			fc.property(fc.integer(), (a) => {
+				expect(sum(a, 0)).toEqual(a);
+			})
+		);
+	});
+
+	test('Sum is commutative', () => {
+		fc.assert(
+			fc.property(fc.integer(), fc.integer(), (a, b) => {
+				expect(sum(a, b)).toEqual(sum(b, a));
+			})
+		);
+	});
+
+	test('Sum is associative', () => {
+		fc.assert(
+			fc.property(fc.integer(), fc.integer(), fc.integer(), (a, b, c: number) => {
+				expect(sum(sum(a, b), c)).toEqual(sum(a, sum(b, c)));
+			})
+		);
+	});
 });
